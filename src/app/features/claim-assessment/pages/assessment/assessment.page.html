@@ -1,0 +1,185 @@
+<div class="page-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-title-group">
+      <h1>Claim Assessment</h1>
+      <p>Calculate deductibles, depreciation, non-payable deductions, and final net payable amount.</p>
+    </div>
+    <div class="header-actions">
+      <a *ngIf="claimId" mat-stroked-button [routerLink]="['/claims', claimId]">
+        <mat-icon>arrow_back</mat-icon> Back to Claim Details
+      </a>
+      <button mat-icon-button (click)="loadClaimAndAssessments()" title="Reload assessment">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Claim Context Selector -->
+  <div *ngIf="allClaims.length > 0" class="panel claim-selector-panel">
+    <div class="claim-selector-row">
+      <mat-form-field appearance="outline" class="claim-select-field">
+        <mat-label>Select Claim to Assess</mat-label>
+        <mat-select [(ngModel)]="claimId" (selectionChange)="onClaimSelected()">
+          <mat-option *ngFor="let c of allClaims" [value]="c.claimId">
+            {{ c.claimNumber }} — Policy #{{ c.policyId }} (Status: {{ c.claimStatus }})
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div *ngIf="claim" class="claim-meta-summary">
+        <span>Loss: <strong>{{ claim.estimatedLoss | currency:'INR':'symbol':'1.0-0' }}</strong></span>
+        <span class="status-badge" [ngClass]="getStatusClass(claim.claimStatus)">{{ claim.claimStatus }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Prerequisite Rule Information -->
+  <div class="alert-box info">
+    <mat-icon>rule</mat-icon>
+    <div>
+      <strong>Assessment Prerequisites (Enforced by Backend):</strong>
+      <ol style="margin: 4px 0 0; padding-left: 18px;">
+        <li>All uploaded claim documents must have status <code>VERIFIED</code>.</li>
+        <li>Claim cannot be in <code>UNDER_SURVEY</code> or <code>UNDER_INVESTIGATION</code>.</li>
+        <li>Creating an assessment computes statutory deductions and automatically advances the claim to <code>PENDING_APPROVAL</code>.</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Trigger Assessment Action Card -->
+  <div *ngIf="claim" class="panel action-card">
+    <div class="action-card-content">
+      <div>
+        <h2 class="panel-title" style="margin: 0 0 4px 0;">
+          <mat-icon>calculate</mat-icon> Run Backend Claim Assessment
+        </h2>
+        <p class="text-muted" style="margin: 0;">
+          The Spring Boot backend will calculate deductibles, depreciation, and non-payable amounts against the estimated loss of <strong>{{ claim.estimatedLoss | currency:'INR':'symbol':'1.0-0' }}</strong>.
+        </p>
+      </div>
+      <div>
+        <button mat-raised-button color="primary" (click)="onCreateAssessment()" [disabled]="creating">
+          <mat-spinner *ngIf="creating" diameter="18" style="display: inline-block; margin-right: 6px;"></mat-spinner>
+          <mat-icon *ngIf="!creating">play_arrow</mat-icon> Generate Assessment
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Latest Assessment Summary Card -->
+  <div *ngIf="latestAssessment" class="panel assessment-breakdown-card">
+    <div class="breakdown-header">
+      <div>
+        <h2 style="margin: 0; font-size: 18px; color: #0f172a;">Assessment Calculation Breakdown</h2>
+        <span class="text-muted" style="font-size: 13px;">Assessment ID: #{{ latestAssessment.assessmentId }} (Claim #{{ latestAssessment.claimId }})</span>
+      </div>
+      <div class="net-payable-badge">
+        <span class="payable-label">Net Payable Amount</span>
+        <span class="payable-value">{{ latestAssessment.netPayable | currency:'INR':'symbol':'1.0-0' }}</span>
+      </div>
+    </div>
+
+    <div class="breakdown-grid">
+      <div class="breakdown-item base">
+        <span class="b-label">Assessed / Estimated Loss</span>
+        <span class="b-val">{{ latestAssessment.assessedAmount | currency:'INR':'symbol':'1.0-0' }}</span>
+      </div>
+      <div class="breakdown-item deduction">
+        <span class="b-label">Deductible (-)</span>
+        <span class="b-val">{{ latestAssessment.deductible | currency:'INR':'symbol':'1.0-0' }}</span>
+      </div>
+      <div class="breakdown-item deduction">
+        <span class="b-label">Depreciation (-)</span>
+        <span class="b-val">{{ latestAssessment.depreciation | currency:'INR':'symbol':'1.0-0' }}</span>
+      </div>
+      <div class="breakdown-item deduction">
+        <span class="b-label">Non-Payable Items (-)</span>
+        <span class="b-val">{{ latestAssessment.nonPayable | currency:'INR':'symbol':'1.0-0' }}</span>
+      </div>
+    </div>
+
+    <div class="post-assessment-actions">
+      <a mat-raised-button color="primary" [routerLink]="['/claims', claimId, 'approval']">
+        <mat-icon>gavel</mat-icon> Proceed to Approval Review
+      </a>
+      <a *ngIf="claimId" mat-stroked-button [routerLink]="['/claims', claimId]">
+        <mat-icon>visibility</mat-icon> View Claim
+      </a>
+    </div>
+  </div>
+
+  <!-- Assessment History Table -->
+  <div class="panel">
+    <div class="page-header" style="margin-bottom: 16px;">
+      <h2 class="panel-title" style="margin: 0;">
+        <mat-icon>history</mat-icon> Assessment Records ({{ assessments.length }})
+      </h2>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-indicator">
+      <mat-spinner diameter="36"></mat-spinner>
+      <p>Loading assessment records from backend...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!loading && error" class="alert-box danger">
+      <mat-icon>error_outline</mat-icon>
+      <div>{{ error }}</div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && !error && assessments.length === 0" class="empty-state">
+      <mat-icon>calculate</mat-icon>
+      <h3>No assessment created yet</h3>
+      <p>Ensure documents are verified, then click "Generate Assessment" above.</p>
+    </div>
+
+    <!-- History Table -->
+    <div *ngIf="!loading && !error && assessments.length > 0" class="table-container">
+      <table mat-table [dataSource]="assessments" class="mat-elevation-z0">
+        <!-- Assessment ID -->
+        <ng-container matColumnDef="assessmentId">
+          <th mat-header-cell *matHeaderCellDef>Assessment ID</th>
+          <td mat-cell *matCellDef="let a" class="font-medium">#{{ a.assessmentId }}</td>
+        </ng-container>
+
+        <!-- Assessed Amount -->
+        <ng-container matColumnDef="assessedAmount">
+          <th mat-header-cell *matHeaderCellDef>Assessed Loss</th>
+          <td mat-cell *matCellDef="let a">{{ a.assessedAmount | currency:'INR':'symbol':'1.0-0' }}</td>
+        </ng-container>
+
+        <!-- Deductible -->
+        <ng-container matColumnDef="deductible">
+          <th mat-header-cell *matHeaderCellDef>Deductible</th>
+          <td mat-cell *matCellDef="let a" class="text-muted">{{ a.deductible | currency:'INR':'symbol':'1.0-0' }}</td>
+        </ng-container>
+
+        <!-- Depreciation -->
+        <ng-container matColumnDef="depreciation">
+          <th mat-header-cell *matHeaderCellDef>Depreciation</th>
+          <td mat-cell *matCellDef="let a" class="text-muted">{{ a.depreciation | currency:'INR':'symbol':'1.0-0' }}</td>
+        </ng-container>
+
+        <!-- Non-Payable -->
+        <ng-container matColumnDef="nonPayable">
+          <th mat-header-cell *matHeaderCellDef>Non-Payable</th>
+          <td mat-cell *matCellDef="let a" class="text-muted">{{ a.nonPayable | currency:'INR':'symbol':'1.0-0' }}</td>
+        </ng-container>
+
+        <!-- Net Payable -->
+        <ng-container matColumnDef="netPayable">
+          <th mat-header-cell *matHeaderCellDef>Net Payable</th>
+          <td mat-cell *matCellDef="let a" class="font-bold" style="color: #0f766e;">
+            {{ a.netPayable | currency:'INR':'symbol':'1.0-0' }}
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  </div>
+</div>

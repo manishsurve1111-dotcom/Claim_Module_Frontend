@@ -1,0 +1,167 @@
+<div class="page-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-title-group">
+      <h1>Register New Claim</h1>
+      <p>Initiate a new insurance claim with policy verification and loss estimate.</p>
+    </div>
+    <div class="header-actions">
+      <a mat-stroked-button routerLink="/claims">
+        <mat-icon>arrow_back</mat-icon> Back to Claims
+      </a>
+    </div>
+  </div>
+
+  <!-- Success Notification Card -->
+  <div *ngIf="registeredClaim" class="panel success-card">
+    <div class="success-header">
+      <mat-icon class="success-icon">check_circle</mat-icon>
+      <div>
+        <h2>Claim Registered Successfully!</h2>
+        <p>The backend has recorded the claim and moved it to <strong>{{ registeredClaim.claimStatus }}</strong> status.</p>
+      </div>
+    </div>
+
+    <div class="claim-summary-grid">
+      <div class="summary-item">
+        <span class="summary-label">Claim ID</span>
+        <span class="summary-value">#{{ registeredClaim.claimId }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Claim Number</span>
+        <span class="summary-value font-bold">{{ registeredClaim.claimNumber }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Policy ID</span>
+        <span class="summary-value">{{ registeredClaim.policyId }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Customer ID</span>
+        <span class="summary-value">{{ registeredClaim.customerId }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Claim Type</span>
+        <span class="summary-value">{{ registeredClaim.claimType }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="summary-label">Status</span>
+        <span class="status-badge registered">{{ registeredClaim.claimStatus }}</span>
+      </div>
+    </div>
+
+    <div class="next-step-actions">
+      <a mat-raised-button color="primary" [routerLink]="['/claims', registeredClaim.claimId, 'documents']">
+        <mat-icon>upload_file</mat-icon> Upload Required Documents
+      </a>
+      <a mat-stroked-button [routerLink]="['/claims', registeredClaim.claimId]">
+        <mat-icon>visibility</mat-icon> View Claim Details
+      </a>
+      <button mat-button (click)="resetForm()">
+        <mat-icon>add</mat-icon> Register Another Claim
+      </button>
+    </div>
+  </div>
+
+  <!-- Error Alert -->
+  <div *ngIf="errorMessage" class="alert-box danger">
+    <mat-icon>error_outline</mat-icon>
+    <div>
+      <strong>Registration Failed:</strong> {{ errorMessage }}
+      <p style="margin: 4px 0 0; font-size: 13px;">Review the validation rules. For example, verify policy ownership and that the incident date is past or today.</p>
+    </div>
+  </div>
+
+  <!-- Eligibility Notice if checked -->
+  <div *ngIf="eligibilityResult" class="alert-box" [ngClass]="eligibilityResult.eligible ? 'success' : 'warning'">
+    <mat-icon>{{ eligibilityResult.eligible ? 'verified' : 'warning' }}</mat-icon>
+    <div>
+      <strong>{{ eligibilityResult.message }}</strong>
+      <ul *ngIf="eligibilityResult.errors && eligibilityResult.errors.length > 0" style="margin: 6px 0 0; padding-left: 18px;">
+        <li *ngFor="let err of eligibilityResult.errors">{{ err }}</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Registration Form Panel -->
+  <div *ngIf="!registeredClaim" class="panel">
+    <h2 class="panel-title">
+      <mat-icon>edit_note</mat-icon> Claim Information Form
+    </h2>
+
+    <form [formGroup]="claimForm" (ngSubmit)="onSubmit()">
+      <div class="form-grid">
+        <!-- Policy ID -->
+        <mat-form-field appearance="outline">
+          <mat-label>Policy ID *</mat-label>
+          <input matInput type="number" formControlName="policyId" placeholder="e.g. 101" min="1">
+          <mat-icon matSuffix>verified_user</mat-icon>
+          <mat-error *ngIf="claimForm.get('policyId')?.hasError('required')">Policy ID is required.</mat-error>
+          <mat-error *ngIf="claimForm.get('policyId')?.hasError('min')">Policy ID must be positive.</mat-error>
+        </mat-form-field>
+
+        <!-- Customer ID -->
+        <mat-form-field appearance="outline">
+          <mat-label>Customer ID *</mat-label>
+          <input matInput type="number" formControlName="customerId" placeholder="e.g. 501" min="1">
+          <mat-icon matSuffix>person</mat-icon>
+          <mat-error *ngIf="claimForm.get('customerId')?.hasError('required')">Customer ID is required.</mat-error>
+          <mat-error *ngIf="claimForm.get('customerId')?.hasError('min')">Customer ID must be positive.</mat-error>
+        </mat-form-field>
+
+        <!-- Customer Email -->
+        <mat-form-field appearance="outline">
+          <mat-label>Customer Email (for Notifications)</mat-label>
+          <input matInput type="email" formControlName="customerEmail" placeholder="customer@example.com">
+          <mat-icon matSuffix>email</mat-icon>
+          <mat-hint>Used by backend email service for lifecycle alerts.</mat-hint>
+          <mat-error *ngIf="claimForm.get('customerEmail')?.hasError('email')">Enter a valid email address.</mat-error>
+        </mat-form-field>
+
+        <!-- Claim Type -->
+        <mat-form-field appearance="outline">
+          <mat-label>Claim Type *</mat-label>
+          <mat-select formControlName="claimType">
+            <mat-option *ngFor="let type of claimTypes" [value]="type">{{ type }}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="claimForm.get('claimType')?.hasError('required')">Claim type is required.</mat-error>
+        </mat-form-field>
+
+        <!-- Incident Date -->
+        <mat-form-field appearance="outline">
+          <mat-label>Incident Date *</mat-label>
+          <input matInput type="date" formControlName="incidentDate" [max]="today">
+          <mat-hint>Cannot be in the future.</mat-hint>
+          <mat-error *ngIf="claimForm.get('incidentDate')?.hasError('required')">Incident date is required.</mat-error>
+        </mat-form-field>
+
+        <!-- Estimated Loss -->
+        <mat-form-field appearance="outline">
+          <mat-label>Estimated Loss Amount (INR) *</mat-label>
+          <input matInput type="number" formControlName="estimatedLoss" placeholder="e.g. 45000" min="0.01" step="0.01">
+          <span matPrefix>₹&nbsp;</span>
+          <mat-error *ngIf="claimForm.get('estimatedLoss')?.hasError('required')">Estimated loss is required.</mat-error>
+          <mat-error *ngIf="claimForm.get('estimatedLoss')?.hasError('min')">Estimated loss must be greater than zero.</mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="form-actions">
+        <button type="button" mat-stroked-button color="accent" (click)="checkEligibility()" [disabled]="checkingEligibility || submitting">
+          <mat-spinner *ngIf="checkingEligibility" diameter="18" style="display: inline-block; margin-right: 6px;"></mat-spinner>
+          <mat-icon *ngIf="!checkingEligibility">fact_check</mat-icon>
+          Pre-Check Policy Eligibility
+        </button>
+
+        <button type="button" mat-button (click)="resetForm()" [disabled]="submitting">
+          Reset Form
+        </button>
+
+        <button type="submit" mat-raised-button color="primary" [disabled]="submitting || claimForm.invalid">
+          <mat-spinner *ngIf="submitting" diameter="18" style="display: inline-block; margin-right: 6px;"></mat-spinner>
+          <mat-icon *ngIf="!submitting">send</mat-icon>
+          Submit Claim Registration
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

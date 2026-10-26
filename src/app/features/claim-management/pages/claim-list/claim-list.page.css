@@ -1,0 +1,27 @@
+.filter-panel {
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.search-field {
+  flex: 2;
+  min-width: 240px;
+}
+
+.select-field {
+  flex: 1;
+  min-width: 160px;
+}
+
+.reset-btn {
+  height: 52px;
+  margin-bottom: 22px;
+  color: var(--text-muted);
+}

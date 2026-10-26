@@ -1,0 +1,163 @@
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.app-toolbar {
+  position: relative;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(90deg, #1e3a8a 0%, #1e40af 100%);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  height: 64px;
+}
+
+.brand-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: 8px;
+}
+
+.brand-icon {
+  font-size: 28px;
+  height: 28px;
+  width: 28px;
+  color: #93c5fd;
+}
+
+.brand-title {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #ffffff;
+}
+
+.brand-sub {
+  font-size: 11px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.backend-status-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  margin-right: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+}
+
+.backend-text {
+  color: #e2e8f0;
+  font-weight: 500;
+}
+
+.quick-register-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.quick-register-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.app-sidenav-container {
+  flex: 1;
+  height: calc(100vh - 64px);
+}
+
+.app-sidenav {
+  width: 260px;
+  background: #ffffff;
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidenav-header {
+  padding: 16px 20px 6px;
+}
+
+.sidenav-heading {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #94a3b8;
+}
+
+.nav-list {
+  padding-top: 4px;
+}
+
+.nav-list a.mat-mdc-list-item {
+  border-radius: 0 24px 24px 0;
+  margin: 2px 8px 2px 0;
+  color: #475569;
+  font-weight: 500;
+  transition: all 0.15s ease;
+}
+
+.nav-list a.mat-mdc-list-item:hover {
+  background: #f1f5f9;
+  color: #1e3a8a;
+}
+
+.nav-list a.mat-mdc-list-item.active-nav-item {
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 600;
+  border-left: 4px solid #2563eb;
+}
+
+.nav-list a.mat-mdc-list-item.active-nav-item mat-icon {
+  color: #2563eb;
+}
+
+.sidenav-footer {
+  margin-top: auto;
+  padding: 16px 20px;
+  font-size: 12px;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-top: 1px solid var(--border-color);
+  background: #f8fafc;
+}
+
+.app-main-content {
+  background-color: var(--bg-color);
+  height: 100%;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .brand-sub, .backend-status-pill {
+    display: none;
+  }
+}

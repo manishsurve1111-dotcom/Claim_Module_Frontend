@@ -1,0 +1,180 @@
+<div class="page-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-title-group">
+      <h1>Claim Details</h1>
+      <p *ngIf="claim">Managing Claim <strong>{{ claim.claimNumber }}</strong></p>
+    </div>
+    <div class="header-actions">
+      <a mat-stroked-button routerLink="/claims">
+        <mat-icon>arrow_back</mat-icon> All Claims
+      </a>
+      <button mat-icon-button (click)="loadClaim()" title="Refresh claim details">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-indicator">
+    <mat-spinner diameter="44"></mat-spinner>
+    <p>Loading claim details...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!loading && error" class="alert-box danger">
+    <mat-icon>error_outline</mat-icon>
+    <div>
+      <strong>Error:</strong> {{ error }}
+      <p style="margin: 4px 0 0; font-size: 13px;">Check that the claim exists in the database.</p>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div *ngIf="!loading && !error && claim">
+    <!-- Rejection Alert if Claim is Rejected -->
+    <div *ngIf="claim.claimStatus === 'REJECTED'" class="alert-box danger">
+      <mat-icon>cancel</mat-icon>
+      <div>
+        <strong>Claim Rejected:</strong>
+        <span *ngIf="rejectionReason"> {{ rejectionReason }}</span>
+        <span *ngIf="!rejectionReason"> This claim was rejected during approval review.</span>
+      </div>
+    </div>
+
+    <!-- Claim Info Panel -->
+    <div class="panel">
+      <div class="claim-details-header">
+        <div>
+          <span class="claim-number-title">{{ claim.claimNumber }}</span>
+          <span class="claim-id-sub">System ID: #{{ claim.claimId }}</span>
+        </div>
+        <div>
+          <span class="status-badge" [ngClass]="getStatusClass(claim.claimStatus)">
+            {{ claim.claimStatus }}
+          </span>
+        </div>
+      </div>
+
+      <div class="details-grid">
+        <div class="detail-cell">
+          <span class="cell-label">Policy ID</span>
+          <span class="cell-value font-bold">{{ claim.policyId }}</span>
+        </div>
+
+        <div class="detail-cell">
+          <span class="cell-label">Customer ID</span>
+          <span class="cell-value font-bold">{{ claim.customerId }}</span>
+        </div>
+
+        <div class="detail-cell">
+          <span class="cell-label">Claim Type</span>
+          <span class="cell-value">
+            <mat-chip>{{ claim.claimType }}</mat-chip>
+          </span>
+        </div>
+
+        <div class="detail-cell">
+          <span class="cell-label">Incident Date</span>
+          <span class="cell-value">{{ claim.incidentDate | date:'mediumDate' }}</span>
+        </div>
+
+        <div class="detail-cell">
+          <span class="cell-label">Claim Submission Date</span>
+          <span class="cell-value">{{ claim.claimDate | date:'mediumDate' }}</span>
+        </div>
+
+        <div class="detail-cell">
+          <span class="cell-label">Estimated Loss</span>
+          <span class="cell-value amount-highlight">
+            {{ claim.estimatedLoss | currency:'INR':'symbol':'1.0-0' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related Modules Navigation Hub -->
+    <div class="panel">
+      <h2 class="panel-title">
+        <mat-icon>hub</mat-icon> Claim Lifecycle Actions
+      </h2>
+      <p class="text-muted" style="margin-top: -8px; margin-bottom: 20px;">
+        Navigate directly to any stage of this claim's processing lifecycle.
+      </p>
+
+      <div class="lifecycle-cards-grid">
+        <!-- Documents Card -->
+        <a [routerLink]="['/claims', claim.claimId, 'documents']" class="lifecycle-card">
+          <div class="card-icon-box doc">
+            <mat-icon>description</mat-icon>
+          </div>
+          <div class="card-text">
+            <h3>Documents</h3>
+            <p>Upload files & verify customer documentation.</p>
+          </div>
+          <mat-icon class="card-arrow">arrow_forward</mat-icon>
+        </a>
+
+        <!-- Survey Card -->
+        <a [routerLink]="['/claims', claim.claimId, 'surveys']" class="lifecycle-card">
+          <div class="card-icon-box survey">
+            <mat-icon>engineering</mat-icon>
+          </div>
+          <div class="card-text">
+            <h3>Survey</h3>
+            <p>Assign surveyor & review inspection report.</p>
+          </div>
+          <mat-icon class="card-arrow">arrow_forward</mat-icon>
+        </a>
+
+        <!-- Investigation Card -->
+        <a [routerLink]="['/claims', claim.claimId, 'investigations']" class="lifecycle-card">
+          <div class="card-icon-box invest">
+            <mat-icon>manage_search</mat-icon>
+          </div>
+          <div class="card-text">
+            <h3>Investigation</h3>
+            <p>Start investigation & submit findings.</p>
+          </div>
+          <mat-icon class="card-arrow">arrow_forward</mat-icon>
+        </a>
+
+        <!-- Assessment Card -->
+        <a [routerLink]="['/claims', claim.claimId, 'assessment']" class="lifecycle-card">
+          <div class="card-icon-box assess">
+            <mat-icon>calculate</mat-icon>
+          </div>
+          <div class="card-text">
+            <h3>Assessment</h3>
+            <p>Calculate net payable & deductibles.</p>
+          </div>
+          <mat-icon class="card-arrow">arrow_forward</mat-icon>
+        </a>
+
+        <!-- Approval Card -->
+        <a [routerLink]="['/claims', claim.claimId, 'approval']" class="lifecycle-card">
+          <div class="card-icon-box approve">
+            <mat-icon>gavel</mat-icon>
+          </div>
+          <div class="card-text">
+            <h3>Approval</h3>
+            <p>Approve or reject claim decision.</p>
+          </div>
+          <mat-icon class="card-arrow">arrow_forward</mat-icon>
+        </a>
+
+        <!-- Settlement Card -->
+        <a [routerLink]="['/claims', claim.claimId, 'settlement']" class="lifecycle-card">
+          <div class="card-icon-box settle">
+            <mat-icon>payments</mat-icon>
+          </div>
+          <div class="card-text">
+            <h3>Settlement</h3>
+            <p>Initiate disbursement & banking details.</p>
+          </div>
+          <mat-icon class="card-arrow">arrow_forward</mat-icon>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

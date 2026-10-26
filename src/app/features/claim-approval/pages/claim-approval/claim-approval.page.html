@@ -1,0 +1,186 @@
+<div class="page-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-title-group">
+      <h1>Claim Approval & Adjudication</h1>
+      <p>Authorized review desk for approving assessed claims or recording rejection reasons.</p>
+    </div>
+    <div class="header-actions">
+      <button mat-icon-button (click)="loadClaims()" title="Reload claims">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Role Notice Alert -->
+  <div class="alert-box info">
+    <mat-icon>shield</mat-icon>
+    <div>
+      <strong>Authority & Validation Rules:</strong>
+      Only claims currently in <code>PENDING_APPROVAL</code> status can be approved or rejected by the backend. When rejecting, an explicit reason is strictly required by the backend.
+    </div>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="panel filter-panel">
+    <div class="filter-controls">
+      <mat-form-field appearance="outline" style="min-width: 220px;">
+        <mat-label>Filter by Status</mat-label>
+        <mat-select [(ngModel)]="filterStatus" (selectionChange)="applyFilter()">
+          <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- Inline Approval Decision Form Panel (when selected) -->
+  <div *ngIf="selectedClaimForDecision" class="panel decision-panel" [ngClass]="decisionForm.get('approved')?.value ? 'approve-border' : 'reject-border'">
+    <div class="decision-panel-header">
+      <div>
+        <h2 style="margin: 0 0 4px 0; font-size: 18px;">
+          Adjudicate Claim: {{ selectedClaimForDecision.claimNumber }}
+        </h2>
+        <span class="text-muted">Claim ID: #{{ selectedClaimForDecision.claimId }} | Current Status: </span>
+        <span class="status-badge" [ngClass]="getStatusClass(selectedClaimForDecision.claimStatus)">
+          {{ selectedClaimForDecision.claimStatus }}
+        </span>
+      </div>
+      <button mat-icon-button (click)="closeDecisionPanel()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <!-- Warning if not PENDING_APPROVAL -->
+    <div *ngIf="selectedClaimForDecision.claimStatus !== 'PENDING_APPROVAL'" class="alert-box warning" style="margin-top: 12px;">
+      <mat-icon>warning</mat-icon>
+      <div>
+        Note: The backend enforces that only claims with status <code>PENDING_APPROVAL</code> can be decided. This claim is currently <strong>{{ selectedClaimForDecision.claimStatus }}</strong>.
+      </div>
+    </div>
+
+    <form [formGroup]="decisionForm" (ngSubmit)="onSubmitDecision()" style="margin-top: 16px;">
+      <div class="form-grid single-col">
+        <!-- Decision Radio/Select -->
+        <mat-form-field appearance="outline">
+          <mat-label>Decision *</mat-label>
+          <mat-select formControlName="approved">
+            <mat-option [value]="true">APPROVE Claim (Eligible for Settlement)</mat-option>
+            <mat-option [value]="false">REJECT Claim (Requires Reason)</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Reason Field -->
+        <mat-form-field appearance="outline">
+          <mat-label>
+            {{ decisionForm.get('approved')?.value ? 'Approval Remarks (Optional)' : 'Rejection Reason *' }}
+          </mat-label>
+          <textarea matInput formControlName="reason" rows="3"
+                    [placeholder]="decisionForm.get('approved')?.value ? 'Add notes for the settlement team...' : 'Explain why the claim is being rejected (mandatory)...'"></textarea>
+          <mat-error *ngIf="decisionForm.get('reason')?.hasError('required')">
+            A rejection reason is required when rejecting a claim.
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" mat-button (click)="closeDecisionPanel()" [disabled]="submitting">Cancel</button>
+        <button type="submit" mat-raised-button
+                [color]="decisionForm.get('approved')?.value ? 'primary' : 'warn'"
+                [disabled]="submitting || decisionForm.invalid">
+          <mat-spinner *ngIf="submitting" diameter="18" style="display: inline-block; margin-right: 6px;"></mat-spinner>
+          <mat-icon *ngIf="!submitting">{{ decisionForm.get('approved')?.value ? 'check_circle' : 'cancel' }}</mat-icon>
+          Submit {{ decisionForm.get('approved')?.value ? 'Approval' : 'Rejection' }} Decision
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Claims Table Panel -->
+  <div class="panel">
+    <div class="page-header" style="margin-bottom: 16px;">
+      <h2 class="panel-title" style="margin: 0;">
+        <mat-icon>gavel</mat-icon> Claims Pending or Decided ({{ filteredClaims.length }})
+      </h2>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="loading" class="loading-indicator">
+      <mat-spinner diameter="36"></mat-spinner>
+      <p>Loading claims from <code>/api/v1/claims</code>...</p>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="!loading && error" class="alert-box danger">
+      <mat-icon>error_outline</mat-icon>
+      <div>{{ error }}</div>
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="!loading && !error && filteredClaims.length === 0" class="empty-state">
+      <mat-icon>done_all</mat-icon>
+      <h3>No claims matching filter</h3>
+      <p>There are no claims under this status category.</p>
+    </div>
+
+    <!-- Table -->
+    <div *ngIf="!loading && !error && filteredClaims.length > 0" class="table-container">
+      <table mat-table [dataSource]="filteredClaims" class="mat-elevation-z0">
+        <!-- Claim ID -->
+        <ng-container matColumnDef="claimId">
+          <th mat-header-cell *matHeaderCellDef>Claim ID</th>
+          <td mat-cell *matCellDef="let c" class="font-medium text-muted">#{{ c.claimId }}</td>
+        </ng-container>
+
+        <!-- Claim Number -->
+        <ng-container matColumnDef="claimNumber">
+          <th mat-header-cell *matHeaderCellDef>Claim Number</th>
+          <td mat-cell *matCellDef="let c">
+            <span class="font-bold">{{ c.claimNumber }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Status -->
+        <ng-container matColumnDef="claimStatus">
+          <th mat-header-cell *matHeaderCellDef>Decision Status</th>
+          <td mat-cell *matCellDef="let c">
+            <span class="status-badge" [ngClass]="getStatusClass(c.claimStatus)">
+              {{ c.claimStatus }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Reason -->
+        <ng-container matColumnDef="reason">
+          <th mat-header-cell *matHeaderCellDef>Rejection / Notes</th>
+          <td mat-cell *matCellDef="let c">
+            <span *ngIf="c.reason" class="reason-text">{{ c.reason }}</span>
+            <span *ngIf="!c.reason" class="text-muted">—</span>
+          </td>
+        </ng-container>
+
+        <!-- Actions -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let c">
+            <div class="actions">
+              <button *ngIf="c.claimStatus === 'PENDING_APPROVAL'"
+                      mat-raised-button color="primary" (click)="openDecisionPanel(c)">
+                <mat-icon>rate_review</mat-icon> Review & Decide
+              </button>
+              <button *ngIf="c.claimStatus !== 'PENDING_APPROVAL'"
+                      mat-stroked-button (click)="openDecisionPanel(c)">
+                <mat-icon>edit</mat-icon> View Decision
+              </button>
+              <a mat-button [routerLink]="['/claims', c.claimId]">
+                <mat-icon>visibility</mat-icon> Details
+              </a>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  </div>
+</div>

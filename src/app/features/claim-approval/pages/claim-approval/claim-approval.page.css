@@ -1,0 +1,40 @@
+.filter-panel {
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.decision-panel {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.decision-panel.approve-border {
+  border-left: 6px solid #16a34a;
+}
+
+.decision-panel.reject-border {
+  border-left: 6px solid #dc2626;
+}
+
+.decision-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.reason-text {
+  color: #b91c1c;
+  font-weight: 500;
+  max-width: 320px;
+  display: inline-block;
+}

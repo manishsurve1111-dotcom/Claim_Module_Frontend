@@ -1,0 +1,125 @@
+.claim-selector-panel {
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.claim-selector-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.claim-select-field {
+  flex: 1;
+  min-width: 280px;
+}
+
+.claim-meta-summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 14px;
+}
+
+.action-card {
+  background: #f8fafc;
+  border-left: 5px solid #0284c7;
+}
+
+.action-card-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.assessment-breakdown-card {
+  background: #ffffff;
+  border: 1px solid #0d9488;
+  border-radius: 12px;
+}
+
+.breakdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.net-payable-badge {
+  background: #ccfbf1;
+  border: 1px solid #14b8a6;
+  border-radius: 10px;
+  padding: 8px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.payable-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #0f766e;
+  text-transform: uppercase;
+}
+
+.payable-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #115e59;
+}
+
+.breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.breakdown-item {
+  padding: 14px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.breakdown-item.base {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+}
+
+.breakdown-item.deduction {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+}
+
+.b-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.b-val {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.breakdown-item.deduction .b-val {
+  color: #b91c1c;
+}
+
+.post-assessment-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}

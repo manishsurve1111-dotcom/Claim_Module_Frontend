@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["src/app/features/claim-management/pages/claim-list/claim-list.page.css"],
+  "sourcesContent": [".filter-panel {\n  padding: 16px 20px;\n  margin-bottom: 20px;\n}\n\n.filter-controls {\n  display: flex;\n  align-items: center;\n  gap: 16px;\n  flex-wrap: wrap;\n}\n\n.search-field {\n  flex: 2;\n  min-width: 240px;\n}\n\n.select-field {\n  flex: 1;\n  min-width: 160px;\n}\n\n.reset-btn {\n  height: 52px;\n  margin-bottom: 22px;\n  color: var(--text-muted);\n}\n"],
+  "mappings": ";AAAA,CAAC;AACC,WAAS,KAAK;AACd,iBAAe;AACjB;AAEA,CAAC;AACC,WAAS;AACT,eAAa;AACb,OAAK;AACL,aAAW;AACb;AAEA,CAAC;AACC,QAAM;AACN,aAAW;AACb;AAEA,CAAC;AACC,QAAM;AACN,aAAW;AACb;AAEA,CAAC;AACC,UAAQ;AACR,iBAAe;AACf,SAAO,IAAI;AACb;",
+  "names": []
+}

@@ -1,0 +1,136 @@
+.kpi-grid {
+  margin-bottom: 24px;
+}
+
+.kpi-card {
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.kpi-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.kpi-icon-wrap.primary {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.kpi-icon-wrap.success {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+
+.kpi-icon-wrap.warning {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.kpi-icon-wrap.info {
+  background: #f0f9ff;
+  color: #0284c7;
+}
+
+.kpi-data {
+  display: flex;
+  flex-direction: column;
+}
+
+.kpi-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.kpi-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.status-chip-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.status-chip-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.status-count-pill {
+  font-weight: 700;
+  font-size: 14px;
+  background: #ffffff;
+  padding: 2px 10px;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+}
+
+.quick-action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.quick-action-buttons a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-start;
+  padding: 10px 16px;
+  font-weight: 500;
+}
+
+.workflow-steps {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #475569;
+}
+
+.step-pill {
+  background: #e2e8f0;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.step-arrow {
+  font-size: 14px;
+  height: 14px;
+  width: 14px;
+  color: #94a3b8;
+}

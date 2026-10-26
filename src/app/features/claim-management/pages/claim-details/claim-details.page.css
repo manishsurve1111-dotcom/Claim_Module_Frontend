@@ -1,0 +1,112 @@
+.claim-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.claim-number-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  display: block;
+}
+
+.claim-id-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.detail-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.cell-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.cell-value {
+  font-size: 16px;
+  color: var(--text-main);
+}
+
+.amount-highlight {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f766e;
+}
+
+.lifecycle-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.lifecycle-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px;
+  background: #f8fafc;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s ease;
+}
+
+.lifecycle-card:hover {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.card-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.card-icon-box.doc { background: #e0f2fe; color: #0284c7; }
+.card-icon-box.survey { background: #fef3c7; color: #d97706; }
+.card-icon-box.invest { background: #f3e8ff; color: #9333ea; }
+.card-icon-box.assess { background: #ccfbf1; color: #0d9488; }
+.card-icon-box.approve { background: #ffedd5; color: #ea580c; }
+.card-icon-box.settle { background: #dcfce7; color: #16a34a; }
+
+.card-text h3 {
+  margin: 0 0 2px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.card-text p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.card-arrow {
+  margin-left: auto;
+  color: #94a3b8;
+  font-size: 20px;
+}

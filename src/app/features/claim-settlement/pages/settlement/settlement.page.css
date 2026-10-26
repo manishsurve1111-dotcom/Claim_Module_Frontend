@@ -1,0 +1,83 @@
+.claim-selector-panel {
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.claim-selector-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.claim-select-field {
+  flex: 1;
+  min-width: 280px;
+}
+
+.claim-meta-summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 14px;
+}
+
+.settlement-record-panel {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-left: 6px solid #16a34a;
+}
+
+.settlement-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #dcfce7;
+}
+
+.settlement-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.s-cell {
+  display: flex;
+  flex-direction: column;
+}
+
+.s-cell.full-width {
+  grid-column: 1 / -1;
+}
+
+.s-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #166534;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+
+.s-val {
+  font-size: 16px;
+  color: var(--text-main);
+}
+
+.s-val.amount {
+  font-size: 22px;
+  font-weight: 700;
+  color: #15803d;
+}
+
+.path-code {
+  font-size: 12px;
+  background: #ffffff;
+  border: 1px solid #bbf7d0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  word-break: break-all;
+}

@@ -1,0 +1,38 @@
+.claim-selector-panel {
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.claim-selector-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.claim-select-field {
+  flex: 1;
+  min-width: 280px;
+}
+
+.claim-meta-summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 14px;
+}
+
+.report-panel {
+  background: #f8fafc;
+  border-left: 5px solid #9333ea;
+}
+
+.path-code {
+  font-size: 12px;
+  background: #f1f5f9;
+  padding: 3px 6px;
+  border-radius: 4px;
+  word-break: break-all;
+}

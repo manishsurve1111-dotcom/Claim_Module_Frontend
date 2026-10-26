@@ -1,0 +1,163 @@
+<div class="page-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-title-group">
+      <h1>Claim Settlement & Disbursement</h1>
+      <p>Record banking verification, initiate settlement advice, and record disbursement details.</p>
+    </div>
+    <div class="header-actions">
+      <a *ngIf="claimId" mat-stroked-button [routerLink]="['/claims', claimId]">
+        <mat-icon>arrow_back</mat-icon> Back to Claim Details
+      </a>
+      <button mat-icon-button (click)="loadClaimAndSettlement()" title="Reload settlement">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Claim Context Selector -->
+  <div *ngIf="allClaims.length > 0" class="panel claim-selector-panel">
+    <div class="claim-selector-row">
+      <mat-form-field appearance="outline" class="claim-select-field">
+        <mat-label>Select Claim to View or Create Settlement</mat-label>
+        <mat-select [(ngModel)]="claimId" (selectionChange)="onClaimSelected()">
+          <mat-option *ngFor="let c of allClaims" [value]="c.claimId">
+            {{ c.claimNumber }} — Policy #{{ c.policyId }} (Status: {{ c.claimStatus }})
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div *ngIf="claim" class="claim-meta-summary">
+        <span>Loss: <strong>{{ claim.estimatedLoss | currency:'INR':'symbol':'1.0-0' }}</strong></span>
+        <span class="status-badge" [ngClass]="getStatusClass(claim.claimStatus)">{{ claim.claimStatus }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Prerequisite Banner -->
+  <div class="alert-box info">
+    <mat-icon>account_balance</mat-icon>
+    <div>
+      <strong>Settlement Eligibility (Enforced by Backend):</strong>
+      Settlement is permitted only for claims with status <code>APPROVED</code> and with an active Assessment calculation. Upon creating settlement, the backend generates an official Settlement Advice PDF.
+    </div>
+  </div>
+
+  <!-- Existing Settlement Details Card -->
+  <div *ngIf="settlement" class="panel settlement-record-panel">
+    <div class="settlement-header">
+      <div>
+        <h2 style="margin: 0 0 4px 0; font-size: 20px; color: #14532d;">
+          <mat-icon style="vertical-align: middle; color: #16a34a;">check_circle</mat-icon>
+          Settlement Record: Claim {{ settlement.claimNumber }}
+        </h2>
+        <span class="text-muted" style="font-size: 13px;">Settlement ID: #{{ settlement.settlementId }}</span>
+      </div>
+      <div>
+        <span class="status-badge" [ngClass]="getStatusClass(settlement.settlementStatus)">
+          Payment: {{ settlement.settlementStatus }}
+        </span>
+      </div>
+    </div>
+
+    <div class="settlement-grid">
+      <div class="s-cell">
+        <span class="s-label">Approved Disbursement Amount</span>
+        <span class="s-val amount">{{ settlement.approvedAmount | currency:'INR':'symbol':'1.0-0' }}</span>
+      </div>
+
+      <div class="s-cell">
+        <span class="s-label">Payment Mode</span>
+        <span class="s-val">
+          <mat-chip>{{ settlement.paymentMode }}</mat-chip>
+        </span>
+      </div>
+
+      <div class="s-cell">
+        <span class="s-label">Transaction Reference</span>
+        <span class="s-val font-bold">{{ settlement.transactionReference || 'Auto-generated' }}</span>
+      </div>
+
+      <div class="s-cell">
+        <span class="s-label">Settlement Date</span>
+        <span class="s-val">{{ settlement.settlementDate | date:'medium' }}</span>
+      </div>
+
+      <div class="s-cell full-width" *ngIf="settlement.settlementAdvicePath">
+        <span class="s-label">Settlement Advice PDF</span>
+        <span class="s-val"><code class="path-code">{{ settlement.settlementAdvicePath }}</code></span>
+      </div>
+
+      <div class="s-cell full-width" *ngIf="settlement.remarks">
+        <span class="s-label">Remarks</span>
+        <span class="s-val text-muted">{{ settlement.remarks }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Settlement Form (if not yet settled) -->
+  <div *ngIf="!settlement" class="panel">
+    <h2 class="panel-title">
+      <mat-icon>payment</mat-icon> Initiate Claim Settlement
+    </h2>
+
+    <div *ngIf="claim && claim.claimStatus !== 'APPROVED'" class="alert-box warning">
+      <mat-icon>warning</mat-icon>
+      <div>
+        <strong>Warning:</strong> Current claim status is <strong>{{ claim.claimStatus }}</strong>.
+        The backend strictly requires status to be <code>APPROVED</code> before initiating settlement.
+      </div>
+    </div>
+
+    <form [formGroup]="settlementForm" (ngSubmit)="onCreateSettlement()">
+      <div class="form-grid">
+        <!-- Payment Mode -->
+        <mat-form-field appearance="outline">
+          <mat-label>Payment Mode *</mat-label>
+          <mat-select formControlName="paymentMode">
+            <mat-option *ngFor="let mode of paymentModes" [value]="mode">{{ mode }}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="settlementForm.get('paymentMode')?.hasError('required')">Payment mode is required.</mat-error>
+        </mat-form-field>
+
+        <!-- Transaction Reference -->
+        <mat-form-field appearance="outline">
+          <mat-label>Transaction Reference (Optional)</mat-label>
+          <input matInput formControlName="transactionReference" placeholder="e.g. TXN987654321">
+          <mat-hint>If left empty, backend generates a reference.</mat-hint>
+        </mat-form-field>
+
+        <!-- Bank Account Number -->
+        <mat-form-field appearance="outline">
+          <mat-label>Bank Account Number *</mat-label>
+          <input matInput formControlName="bankAccountNumber" placeholder="e.g. 123456789012">
+          <mat-icon matSuffix>account_balance</mat-icon>
+          <mat-error *ngIf="settlementForm.get('bankAccountNumber')?.hasError('required')">Account number is required.</mat-error>
+          <mat-error *ngIf="settlementForm.get('bankAccountNumber')?.hasError('minlength')">Account number must be at least 9 digits.</mat-error>
+        </mat-form-field>
+
+        <!-- Bank IFSC Code -->
+        <mat-form-field appearance="outline">
+          <mat-label>Bank IFSC Code *</mat-label>
+          <input matInput formControlName="bankIfscCode" placeholder="e.g. HDFC0001234" style="text-transform: uppercase;">
+          <mat-hint>Standard 11-character Indian IFSC code format.</mat-hint>
+          <mat-error *ngIf="settlementForm.get('bankIfscCode')?.hasError('required')">IFSC code is required.</mat-error>
+          <mat-error *ngIf="settlementForm.get('bankIfscCode')?.hasError('pattern')">Invalid IFSC code format (e.g. SBIN0001234).</mat-error>
+        </mat-form-field>
+
+        <!-- Remarks -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Settlement Remarks (Optional)</mat-label>
+          <textarea matInput formControlName="remarks" rows="2" placeholder="e.g. Disbursed full assessed amount via NEFT"></textarea>
+        </mat-form-field>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" mat-raised-button color="primary" [disabled]="submitting || settlementForm.invalid">
+          <mat-spinner *ngIf="submitting" diameter="18" style="display: inline-block; margin-right: 6px;"></mat-spinner>
+          <mat-icon *ngIf="!submitting">check_circle</mat-icon> Confirm & Initiate Settlement
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
