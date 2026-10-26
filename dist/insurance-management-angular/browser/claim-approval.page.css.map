@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/features/claim-approval/pages/claim-approval/claim-approval.page.css"],
-  "sourcesContent": [".filter-panel {\n  padding: 16px 20px;\n  margin-bottom: 20px;\n}\n\n.filter-controls {\n  display: flex;\n  align-items: center;\n  gap: 16px;\n}\n\n.decision-panel {\n  background: #ffffff;\n  border-radius: 12px;\n  padding: 24px;\n  margin-bottom: 24px;\n}\n\n.decision-panel.approve-border {\n  border-left: 6px solid #16a34a;\n}\n\n.decision-panel.reject-border {\n  border-left: 6px solid #dc2626;\n}\n\n.decision-panel-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: flex-start;\n  padding-bottom: 14px;\n  border-bottom: 1px solid var(--border-color);\n}\n\n.reason-text {\n  color: #b91c1c;\n  font-weight: 500;\n  max-width: 320px;\n  display: inline-block;\n}\n"],
-  "mappings": ";AAAA,CAAC;AACC,WAAS,KAAK;AACd,iBAAe;AACjB;AAEA,CAAC;AACC,WAAS;AACT,eAAa;AACb,OAAK;AACP;AAEA,CAAC;AACC,cAAY;AACZ,iBAAe;AACf,WAAS;AACT,iBAAe;AACjB;AAEA,CAPC,cAOc,CAAC;AACd,eAAa,IAAI,MAAM;AACzB;AAEA,CAXC,cAWc,CAAC;AACd,eAAa,IAAI,MAAM;AACzB;AAEA,CAAC;AACC,WAAS;AACT,mBAAiB;AACjB,eAAa;AACb,kBAAgB;AAChB,iBAAe,IAAI,MAAM,IAAI;AAC/B;AAEA,CAAC;AACC,SAAO;AACP,eAAa;AACb,aAAW;AACX,WAAS;AACX;",
-  "names": []
-}

@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["angular:styles/component:css;01492669329243f98f46f02e7e024e38148dfa31cfd08ccfc6fed5ce9e3bb16a;C:/eSupport/MyProject/Claim_Module_Frontend/src/app/shared/components/status-badge/status-badge.component.ts"],
-  "sourcesContent": ["\n    :host {\n      display: inline-block;\n    }\n  "],
-  "mappings": ";AACI;AACE,WAAS;AACX;",
-  "names": []
-}

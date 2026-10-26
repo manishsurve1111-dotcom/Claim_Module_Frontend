@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["src/app/features/investigation/pages/investigation/investigation.page.css"],
-  "sourcesContent": [".claim-selector-panel {\n  padding: 16px 20px;\n  margin-bottom: 20px;\n}\n\n.claim-selector-row {\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n  gap: 16px;\n  flex-wrap: wrap;\n}\n\n.claim-select-field {\n  flex: 1;\n  min-width: 280px;\n}\n\n.claim-meta-summary {\n  display: flex;\n  align-items: center;\n  gap: 16px;\n  flex-wrap: wrap;\n  font-size: 14px;\n}\n\n.report-panel {\n  background: #f8fafc;\n  border-left: 5px solid #9333ea;\n}\n\n.path-code {\n  font-size: 12px;\n  background: #f1f5f9;\n  padding: 3px 6px;\n  border-radius: 4px;\n  word-break: break-all;\n}\n"],
-  "mappings": ";AAAA,CAAC;AACC,WAAS,KAAK;AACd,iBAAe;AACjB;AAEA,CAAC;AACC,WAAS;AACT,eAAa;AACb,mBAAiB;AACjB,OAAK;AACL,aAAW;AACb;AAEA,CAAC;AACC,QAAM;AACN,aAAW;AACb;AAEA,CAAC;AACC,WAAS;AACT,eAAa;AACb,OAAK;AACL,aAAW;AACX,aAAW;AACb;AAEA,CAAC;AACC,cAAY;AACZ,eAAa,IAAI,MAAM;AACzB;AAEA,CAAC;AACC,aAAW;AACX,cAAY;AACZ,WAAS,IAAI;AACb,iBAAe;AACf,cAAY;AACd;",
-  "names": []
-}
